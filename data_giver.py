@@ -3,26 +3,32 @@ import os
 import pandas as pd
 import data_collection as dc
 
-# tickers = os.listdir('big_data/')
-tickers = ['NIFTYBANK']
 
-print('GETTING STOCK DATA')
+def next(index, stocks_data):
 
-stocks_data = {}
+    # tickers = os.listdir('data2/')
+    # tickers = []
+    # tickers.append(t)
 
-#getting data for all stocks in the timeframe
-for t in tickers:
-    ticker_data = dc.get_data()
-    stocks_data[t] = ticker_data
+    # print('GETTING STOCK DATA FOR', t)
 
-def next(index):
+    # stocks_data = {}
 
-    if index < len(stocks_data[tickers[0]]):
+    #getting data for all stocks in the timeframe
+    # for t in tickers:
+    #     ticker_data = dc.get_data(t)
+    #     stocks_data[t] = ticker_data]
+    
+    n = 0
+    for i in stocks_data:
+        n = len(stocks_data[i])
+
+    if index < n:
         data = {
-            'symbol': [], 'close':[], 'filt': [], 'close_dif': [], 'direction':[], 'pivot': [],'date': []
+            'symbol': [], 'close':[], 'filt': [], 'close_dif': [], 'direction':[], 'pivot': [],'date': [], 'time': []
         }
 
-        for t in tickers:
+        for t in stocks_data:
             symbol = stocks_data[t].iloc[index].symbol
             close = stocks_data[t].iloc[index]['close']
             filt = stocks_data[t].iloc[index]['filt']
@@ -30,6 +36,7 @@ def next(index):
             direction = stocks_data[t].iloc[index]['direction']
             pivot = stocks_data[t].iloc[index]['pivot']
             date = stocks_data[t].iloc[index]['datetime']
+            time = stocks_data[t].iloc[index]['time']
 
             data['symbol'].append(symbol)
             data['close'].append(close)
@@ -38,9 +45,11 @@ def next(index):
             data['direction'].append(direction)
             data['pivot'].append(pivot)
             data['date'].append(date)
+            data['time'].append(time)
 
 
         df = pd.DataFrame(data, index=data['symbol'])
+
 
         return df
 

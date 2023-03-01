@@ -12,19 +12,22 @@ def trade(execute, capital, positions):
     positions = positions
     executed = []
     capital = capital
+    transaction_cost = 0
     ctr = 0
     for e in execute:
-        print("EXECUTING: - ", ctr)
+        # print("EXECUTING: - ", ctr)
         if e.buy:
             capital -= e.buy_val
+            capital -= transaction_cost
             new_pos = position(e.ticker, e.qty, e.buy_val)
             positions.append(new_pos)
-            print("BOUGHT -", e.ticker, " -", e.buy_val)
+            # print("BOUGHT -", e.ticker, " -", e.buy_val)
             executed.append(('BOUGHT', e.ticker, e.buy_val, capital, e.date))
         elif e.sell:
             capital += e.sell_val
+            capital -= transaction_cost
             positions.pop()
-            print("SOLD -", e.ticker, " -", e.sell_val)
+            # print("SOLD -", e.ticker, " -", e.sell_val)
             executed.append(('SOLD', e.ticker, e.sell_val, capital, e.date))
         ctr += 1
 

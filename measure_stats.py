@@ -8,11 +8,16 @@ icap = capital
 position_ticker = {}
 profitable_trades = []
 loss_making_trades = []
-start_date = '0'
-end_date = '0'
+start_date = datetime.today()
+end_date = datetime.today()
+
+flag = True
 
 max = icap
 min = icap
+
+transaction_cost = 0
+
 
 def calc_drawdown():
     global max
@@ -27,15 +32,18 @@ def calc_drawdown():
         min = tval
 
 # opening the CSV file
-with open('actions.csv', mode='r') as file:
+with open('writing/actionsASIANPAINT.csv', mode='r') as file:
     # reading the CSV file
     csvFile = csv.reader(file)
 
     # displaying the contents of the CSV file
     for row in csvFile:
         action, ticker, val, date = row[0], row[1], float(row[2]), row[-1]
-        if start_date == '0':
+        date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        if flag:
             start_date = date
+            end_date = date
+            flag = False
 
         if date > end_date:
             end_date = date
@@ -87,10 +95,10 @@ for i in position_ticker:
 
 final_val += equity
 
-final_profit = final_val - icap
+final_profit = final_val - icap - (transaction_cost*2*no_total_trades)
 
-dtstart = datetime.strptime(start_date, "%d-%m-%Y %H:%M")
-dtend = datetime.strptime(end_date, "%d-%m-%Y %H:%M")
+dtstart = start_date
+dtend = end_date
 total_days = int((dtend - dtstart).days)
 
 expectancy = win_rate*avg_profit_per_trade + (1 - win_rate)*avg_loss_per_trade

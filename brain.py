@@ -19,16 +19,28 @@ class action(object):
 def calculate(capital, df, positions):
     execute = []
 
+    
+
     for i in range(len(df)):
+
+        # if (df.iloc[i]['time'] == '15:29:00'): 
+
+        #     for p in positions:
+        #         sell_val = p.qty*df.iloc[i]['close']
+        #         new_action = action(p.ticker, p.qty, False, True, 0, sell_val, df.iloc[i]['date'])
+        #         execute.append(new_action)
+        
+        #         continue
+
         if (df.iloc[i]['close'] > df.iloc[i]['filt']) and (df.iloc[i]['close_dif'] > 0) and (df.iloc[i]['direction'] == 1) and (df.iloc[i]['pivot'] == 1) and (len(positions) == 0):
             qty = int(capital/df.iloc[i]['close'])
             buy_val = qty*df.iloc[i]['close']
-            new_action = action('NIFTYBANK', qty, True, False, buy_val, 0, df.iloc[i]['date'])
+            new_action = action(df.iloc[i]['symbol'], qty, True, False, buy_val, 0, df.iloc[i]['date'])
             execute.append(new_action)
         elif (df.iloc[i]['close'] < df.iloc[i]['filt']) and (df.iloc[i]['close_dif'] < 0) and (df.iloc[i]['direction'] == -1) and (df.iloc[i]['pivot'] == -1)  and (len(positions) != 0):
             qty = positions[0].qty
             sell_val = qty*df.iloc[i]['close']
-            new_action = action('NIFTYBANK', qty, False, True, 0, sell_val, df.iloc[i]['date'])
+            new_action = action(df.iloc[i]['symbol'], qty, False, True, 0, sell_val, df.iloc[i]['date'])
             execute.append(new_action)
 
     return execute
