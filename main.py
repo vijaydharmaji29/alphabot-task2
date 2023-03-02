@@ -11,26 +11,20 @@ import numpy as np
 def run(t, stocks_data):
     
     capital = 10000000
+    icap = capital
     positions = []
 
     i = 0
 
+    date_ctr = 0
+    date_checking = 0
+    max_trades_per_day = 5
+
+    percent = 1
+
     all_actions = []
 
     while True:
-        # try:
-        #     print("INDEXING - ", i)
-        #     n = dg.next(i)
-
-        #     execute = brain.calculate(capital, n, positions)
-        #     capital, executed, positions = executioner.trade(execute, capital, positions)
-
-        #     for j in executed:
-        #         all_actions.append(j)
-        # except:
-        #     break
-
-        # print("INDEXING - ", i)
         n = dg.next(i, stocks_data)
 
         zero_data = np.zeros(shape=(10,10))
@@ -39,11 +33,37 @@ def run(t, stocks_data):
         if type(n) != type(dummydf):
             break
 
-        execute = brain.calculate(capital, n, positions)
-        capital, executed, positions = executioner.trade(execute, capital, positions)
+        session_date = n.iloc[0]['date_actual']
+    
+        if date_checking != session_date:
+            date_checking = session_date
+            date_ctr = 0
+        
 
-        for j in executed:
-            all_actions.append(j)
+        execute, trade_type, eod = brain.calculate(capital, n, positions)
+
+        if eod or date_ctr < max_trades_per_day*2:
+            capital, executed, positions = executioner.trade(execute, capital, positions)
+
+            if len(execute) > 0:
+
+                # print('TRADE DATE: ', session_date)
+                # print('TRADE NUMBER: ', date_ctr)
+
+                date_ctr += 1
+
+                if execute[0].sell and trade_type:
+                    percent -= .2
+                    capital*percent
+
+                    if capital < icap*.2:
+                        capital = icap*.2
+
+                elif execute[0].sell and  not trade_type:
+                    capital = icap
+
+            for j in executed:
+                all_actions.append(j)
 
         i+=1
 
@@ -53,8 +73,6 @@ def run(t, stocks_data):
 
     print(eval)
 
-    # f = open('writing/actions' + t + '.csv', 'w')
-    # f.close()
 
     # writing to csv file
     with open('writing/actions' + t + '.csv', 'w') as csvfile:
@@ -63,9 +81,6 @@ def run(t, stocks_data):
 
         # writing the data rows
         csvwriter.writerows(all_actions)
-
-    #WRITING STATS
-    # sw.write_stats()
 
 if __name__ == '__main__':
     ts = os.listdir('data2/')

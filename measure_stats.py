@@ -32,7 +32,7 @@ def calc_drawdown():
         min = tval
 
 # opening the CSV file
-with open('writing/actionsASIANPAINT.csv', mode='r') as file:
+with open('writing/actionsBHARTIARTL.csv', mode='r') as file:
     # reading the CSV file
     csvFile = csv.reader(file)
 

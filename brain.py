@@ -23,6 +23,9 @@ def calculate(capital, df, positions):
 
     for i in range(len(df)):
 
+        trade_type = False
+        eod = False
+
         # if (df.iloc[i]['time'] == '15:29:00'): 
 
         #     for p in positions:
@@ -41,9 +44,13 @@ def calculate(capital, df, positions):
             qty = positions[0].qty
             sell_val = qty*df.iloc[i]['close']
             new_action = action(df.iloc[i]['symbol'], qty, False, True, 0, sell_val, df.iloc[i]['date'])
+
+            if positions[0].buy_val < df.iloc[i]['close']:
+                trade_type = True
+                
             execute.append(new_action)
 
-    return execute
+    return execute, trade_type, eod
 
 
 

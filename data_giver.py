@@ -25,7 +25,7 @@ def next(index, stocks_data):
 
     if index < n:
         data = {
-            'symbol': [], 'close':[], 'filt': [], 'close_dif': [], 'direction':[], 'pivot': [],'date': [], 'time': []
+            'symbol': [], 'close':[], 'filt': [], 'close_dif': [], 'direction':[], 'pivot': [],'date': [], 'time': [], 'date_actual': []
         }
 
         for t in stocks_data:
@@ -37,6 +37,8 @@ def next(index, stocks_data):
             pivot = stocks_data[t].iloc[index]['pivot']
             date = stocks_data[t].iloc[index]['datetime']
             time = stocks_data[t].iloc[index]['time']
+            date_actual = stocks_data[t].iloc[index]['date']
+
 
             data['symbol'].append(symbol)
             data['close'].append(close)
@@ -46,7 +48,7 @@ def next(index, stocks_data):
             data['pivot'].append(pivot)
             data['date'].append(date)
             data['time'].append(time)
-
+            data['date_actual'].append(date_actual)
 
         df = pd.DataFrame(data, index=data['symbol'])
 

@@ -69,6 +69,10 @@ def create_data(df):
     filt = rngfilt(df["close"], smrng)  # doing one more activity to something to the close prices
     close_diff, direction = calculate_close_dif(df['close'])
     pivot = calculate_pivot(direction)
+
+    df = df.astype({'datetime': 'string'})
+    df['date'] = df.datetime.str[:10]  # craeting a column for only the date
+
     df['smrng'] = smrng
     df["filt"] = filt
     df['close_dif'] = close_diff
@@ -92,3 +96,4 @@ if __name__ == '__main__':
     ticker = 'RELIANCE'
     df = get_data(ticker)
     print(df.head(20))
+    # print('a', df.iloc[400]['time'], 'a')
