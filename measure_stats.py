@@ -32,13 +32,13 @@ def calc_drawdown():
         min = tval
 
 # opening the CSV file
-with open('writing/actionsBHARTIARTL.csv', mode='r') as file:
+with open('writing/actionsNIFTYBANK.csv', mode='r') as file:
     # reading the CSV file
     csvFile = csv.reader(file)
 
     # displaying the contents of the CSV file
     for row in csvFile:
-        action, ticker, val, date = row[0], row[1], float(row[2]), row[-1]
+        action, ticker, val, date, trade_type = row[0], row[1], float(row[2]), row[4], row[5]
         date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
         if flag:
             start_date = date
@@ -52,18 +52,35 @@ with open('writing/actionsBHARTIARTL.csv', mode='r') as file:
             continue
 
         if action == 'BOUGHT':
-            position_ticker[ticker] = val
             capital -= val
+
+            if trade_type == False:
+                
+                trade_profit = position_ticker[ticker] - val
+                profit_percentage = trade_profit*100/position_ticker[ticker]
+                trade = (ticker, position_ticker[ticker], val, trade_profit, profit_percentage)
+                if trade_profit > 0:
+                    profitable_trades.append(trade)
+                else:
+                    loss_making_trades.append(trade)
+                position_ticker.pop(ticker)
+            else:
+                position_ticker[ticker] = val
+
         elif action == 'SOLD':
             capital += val
-            trade_profit = position_ticker[ticker] - val
-            profit_percentage = trade_profit*100/position_ticker[ticker]
-            trade = (ticker, position_ticker[ticker], val, trade_profit, profit_percentage)
-            if trade_profit > 0:
-                profitable_trades.append(trade)
+
+            if trade_type == True:   
+                trade_profit = position_ticker[ticker] - val
+                profit_percentage = trade_profit*100/position_ticker[ticker]
+                trade = (ticker, position_ticker[ticker], val, trade_profit, profit_percentage)
+                if trade_profit > 0:
+                    profitable_trades.append(trade)
+                else:
+                    loss_making_trades.append(trade)
+                position_ticker.pop(ticker)
             else:
-                loss_making_trades.append(trade)
-            position_ticker.pop(ticker)
+                position_ticker[ticker] = val
 
         calc_drawdown()
 ##calculating all stats:
